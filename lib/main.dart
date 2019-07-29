@@ -59,39 +59,40 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
+  MainModel _mainModel;
 
+  @override
+  void initState() {
+    super.initState();
+    _mainModel = MainModel();
+  }
 
   @override
   void dispose() {
     super.dispose();
-
   }
 
   @override
   Widget build(BuildContext ctx) {
     return ChangeNotifierProvider(
-      builder: (ctx) => MainModel(),
-      child: Consumer<MainModel>(
-        builder: (context, model, child){
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
-            ),
-            body: _buildBody(model),
-            floatingActionButton: FloatingActionButton(
-              onPressed: (){
-                Provider.of<MainModel>(context, listen: false).add(1);
-              },
-              tooltip: 'Increment',
-              child: Icon(Icons.add),
-            ), // This trailing comma makes auto-formatting nicer for build methods.
-          );
-        },
+      builder: (ctx) => _mainModel,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: _buildBody(context),
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            _mainModel.add(1);
+          },
+          tooltip: 'Increment',
+          child: Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
 
-  Widget _buildBody(MainModel model){
+  Widget _buildBody(BuildContext context){
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -99,10 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
           Text(
             'You have pushed the button this many times:',
           ),
-          Text(
-          '${model.currentCount}',
-          style: Theme.of(context).textTheme.display1,
-        ),
+          Consumer<MainModel>(
+            builder: (context, model, chile){
+              return Text(
+                '${model.currentCount}',
+                style: Theme.of(context).textTheme.display1,
+              );
+            },
+          ),
           MyButton(),
         ],
       ),
